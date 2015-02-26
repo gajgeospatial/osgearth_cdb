@@ -1,0 +1,98 @@
+// Copyright (c) 1994-2013 Georgia Tech Research Corporation, Atlanta, GA
+// This file is part of FalconView(tm).
+
+// FalconView(tm) is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// FalconView(tm) is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public License
+// along with FalconView(tm).  If not, see <http://www.gnu.org/licenses/>.
+
+// FalconView(tm) is a trademark of Georgia Tech Research Corporation.
+// 2014-2015 GAJ Geospatial Enterprises, Orlando FL
+// Modified for General Incorporation of Common Database (CDB) support within osgEarth
+
+// CDBOptions
+//
+
+#ifndef OSGEARTH_DRIVERS_CDBOPTIONS
+#define OSGEARTH_DRIVERS_CDBOPTIONS 1
+
+#include <osgEarth/Common>
+#include <osgEarth/TileSource>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+
+    class CDBOptions : public TileSourceOptions // NO EXPORT; header only
+    {
+    public:
+		optional<std::string>& rootDir() { return _rootDir; }
+		const optional<std::string>& rootDir() const { return _rootDir; }
+		optional<std::string>& cacheDir() { return _cacheDir; }
+		const optional<std::string>& cacheDir() const { return _cacheDir; }
+		optional<std::string>& Limits() { return _Limits; }
+		const optional<std::string>& Limits() const { return _Limits; }
+		optional<int>& MaxCDBLevel() { return _MaxCDBLevel; }
+		const optional<int>& MaxCDBLevel() const { return _MaxCDBLevel; }
+		optional<int>& NumNegLODs() { return _NumNegLODs; }
+		const optional<int>& NumNegLODs() const { return _NumNegLODs; }
+
+    public:
+        CDBOptions( const TileSourceOptions& opt = TileSourceOptions() )
+           : TileSourceOptions( opt )
+        {
+            setDriver( "cdb" );
+            fromConfig( _conf );
+        }
+
+        /** dtor */
+        virtual ~CDBOptions() { }
+
+    public:
+        Config getConfig() const
+        {
+            Config conf = TileSourceOptions::getConfig();
+			conf.updateIfSet("root_dir", _rootDir);
+			conf.updateIfSet("cache_dir", _cacheDir);
+			conf.updateIfSet("limits", _Limits);
+			conf.updateIfSet("maxcdblevel", _MaxCDBLevel);
+			conf.updateIfSet("num_neg_lods", _NumNegLODs);
+			return conf;
+        }
+
+    protected:
+        void mergeConfig( const Config& conf )
+        {
+            TileSourceOptions::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const Config& conf )
+        {
+			conf.getIfSet("root_dir", _rootDir);
+			conf.getIfSet("cache_dir", _cacheDir);
+			conf.getIfSet("limits", _Limits);
+			conf.getIfSet("maxcdblevel", _MaxCDBLevel);
+			conf.getIfSet("num_neg_lods", _NumNegLODs);
+		}
+
+        optional<std::string> _rootDir;
+		optional<std::string> _Limits;
+		optional<std::string> _cacheDir;
+		optional<int> _MaxCDBLevel;
+		optional<int> _NumNegLODs;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVERS_CDBOPTIONS
+

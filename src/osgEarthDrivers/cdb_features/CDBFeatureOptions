@@ -1,0 +1,106 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+ * Copyright 2008-2013 Pelican Mapping
+ * http://osgearth.org
+ *
+ * osgEarth is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+// 2014-2015 GAJ Geospatial Enterprises, Orlando FL
+// Created FeatureSourceCDB for Incorporation of Common Database (CDB) support within osgEarth
+
+#ifndef OSGEARTH_DRIVER_CDB_FEATURE_SOURCE_OPTIONS
+#define OSGEARTH_DRIVER_CDB_FEATURE_SOURCE_OPTIONS 1
+
+#include <osgEarth/Common>
+#include <osgEarth/URI>
+#include <osgEarthFeatures/FeatureSource>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Features;
+
+    /**
+     * Options for the CDB feature driver.
+     */
+    class CDBFeatureOptions : public FeatureSourceOptions // NO EXPORT; header only
+    {
+    public:
+		optional<std::string>& rootDir() { return _rootDir; }
+		const optional<std::string>& rootDir() const { return _rootDir; }
+		optional<std::string>& Limits() { return _Limits; }
+		const optional<std::string>& Limits() const { return _Limits; }
+		optional<int>& minLod() { return _minLod; }
+		const optional<int>& minLod() const { return _minLod; }
+		optional<int>& maxLod() { return _maxLod; }
+		const optional<int>& maxLod() const { return _maxLod; }
+		optional<bool>& inflated() { return _inflated; }
+		const optional<bool>& inflated() const { return _inflated; }
+		optional<bool>& geoTypical() { return _geoTypical; }
+		const optional<bool>& geoTypical() const { return _geoTypical; }
+		optional<bool>& GS_uses_GTtex() { return _GS_uses_GTtex; }
+		const optional<bool>& GS_uses_GTtex() const { return _GS_uses_GTtex; }
+	public:
+        CDBFeatureOptions( const ConfigOptions& opt =ConfigOptions() ) :
+          FeatureSourceOptions( opt )
+          {
+            setDriver( "cdb" );            
+            fromConfig( _conf );
+          }
+
+          virtual ~CDBFeatureOptions() { }
+
+    public:
+        Config getConfig() const {
+            Config conf = FeatureSourceOptions::getConfig();
+			conf.updateIfSet("root_dir", _rootDir);
+			conf.updateIfSet("limits", _Limits);
+			conf.updateIfSet("minlod", _minLod);
+			conf.updateIfSet("maxlod", _maxLod);
+			conf.updateIfSet("inflated", _inflated);
+			conf.updateIfSet("geotypical", _geoTypical);
+			conf.updateIfSet("gs_uses_gttex", _GS_uses_GTtex);
+			return conf;
+        }
+
+    protected:
+        void mergeConfig( const Config& conf ) {
+            FeatureSourceOptions::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const Config& conf ) {
+			conf.getIfSet("root_dir", _rootDir);
+			conf.getIfSet("limits", _Limits);
+			conf.getIfSet("minlod", _minLod);
+			conf.getIfSet("maxlod", _maxLod);
+			conf.getIfSet("inflated", _inflated);
+			conf.getIfSet("geotypical", _geoTypical);
+			conf.getIfSet("gs_uses_gttex", _GS_uses_GTtex);
+		}
+
+		optional<std::string> _rootDir;
+		optional<std::string> _Limits;
+		optional<int> _minLod;
+		optional<int> _maxLod;
+		optional<bool>_inflated;
+		optional<bool>_geoTypical;
+		optional<bool>_GS_uses_GTtex;
+	};
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_CDB_FEATURE_SOURCE_OPTIONS
+
