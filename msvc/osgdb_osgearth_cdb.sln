@@ -1,34 +1,36 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin osgearth_cdb", "src\osgEarthDrivers\cdb\osgdb_osgearth_cdb.vcxproj", "{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin osgearth_feature_cdb", "src\osgEarthDrivers\cdb_features\osgdb_osgearth_feature_cdb.vcxproj", "{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		vs2012_Debug|Win32 = vs2012_Debug|Win32
-		vs2012_Debug|x64 = vs2012_Debug|x64
-		vs2012_Release|Win32 = vs2012_Release|Win32
-		vs2012_Release|x64 = vs2012_Release|x64
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.vs2012_Debug|Win32.ActiveCfg = vs2012_Debug|Win32
-		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.vs2012_Debug|Win32.Build.0 = vs2012_Debug|Win32
-		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.vs2012_Debug|x64.ActiveCfg = vs2012_Debug|x64
-		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.vs2012_Debug|x64.Build.0 = vs2012_Debug|x64
-		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.vs2012_Release|Win32.ActiveCfg = vs2012_Release|Win32
-		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.vs2012_Release|Win32.Build.0 = vs2012_Release|Win32
-		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.vs2012_Release|x64.ActiveCfg = vs2012_Release|x64
-		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.vs2012_Release|x64.Build.0 = vs2012_Release|x64
-		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.vs2012_Debug|Win32.ActiveCfg = vs2012_Debug|Win32
-		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.vs2012_Debug|Win32.Build.0 = vs2012_Debug|Win32
-		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.vs2012_Debug|x64.ActiveCfg = vs2012_Debug|x64
-		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.vs2012_Debug|x64.Build.0 = vs2012_Debug|x64
-		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.vs2012_Release|Win32.ActiveCfg = vs2012_Release|Win32
-		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.vs2012_Release|Win32.Build.0 = vs2012_Release|Win32
-		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.vs2012_Release|x64.ActiveCfg = vs2012_Release|x64
-		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.vs2012_Release|x64.Build.0 = vs2012_Release|x64
+		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.Debug|Win32.Build.0 = Debug|Win32
+		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.Debug|x64.ActiveCfg = Debug|x64
+		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.Debug|x64.Build.0 = Debug|x64
+		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.Release|Win32.ActiveCfg = Release|Win32
+		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.Release|Win32.Build.0 = Release|Win32
+		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.Release|x64.ActiveCfg = Release|x64
+		{5073A82C-E337-40D8-8CAC-8E0CCFF4CA1E}.Release|x64.Build.0 = Release|x64
+		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.Debug|Win32.Build.0 = Debug|Win32
+		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.Debug|x64.ActiveCfg = Debug|x64
+		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.Debug|x64.Build.0 = Debug|x64
+		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.Release|Win32.ActiveCfg = Release|Win32
+		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.Release|Win32.Build.0 = Release|Win32
+		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.Release|x64.ActiveCfg = Release|x64
+		{E4D61DFA-066F-4FE3-82C2-21A3C2B1F29E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

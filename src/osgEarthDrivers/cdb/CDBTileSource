@@ -31,8 +31,6 @@
 
 #include "CDBOptions"
 
-#define JP2DRIVERCNT 5
-
 class CDBTileSource : public osgEarth::TileSource
 {
 public:
@@ -60,40 +58,6 @@ private:
    std::string	_rootDir;
    std::string	_cacheDir;
    int			_tileSize;
-   GDALDriver * _JP2Driver;
-   GDALDriver * _GTIFFDriver;
-   GDALDriver * _HFADriver;
-
-   OGRSpatialReference * _CDB_SRS;
-
-   std::string	_JP2DriverNames[JP2DRIVERCNT];
-
-   int GetPathComponents(const osgEarth::TileKey& key, bool elevation,
-						std::string& lat_str, std::string& lon_str, std::string& lod_str,
-						std::string& uref_str, std::string& rref_str, std::string &LayerName_str,
-						std::string& dataset_str, std::string &filetype_str, int &LatBase, int &LonBase);
-
-   std::string CDBFilename(int cdbLod, std::string &rootDir, std::string& lat_str, std::string& lon_str, std::string& lod_str,
-						   std::string& uref_str, std::string& rref_str, std::string &LayerName_str,
-						   std::string& dataset_str, std::string &filetype_str);
-
-   std::string CDBCachename(int cdbLod, std::string &cacheRootDir, std::string &lat_str, std::string& lon_str, std::string& lod_str,
-							std::string& uref_str, std::string& rref_str, std::string &LayerName_str,
-							std::string& dataset_str, std::string &filetype_str);
-
-   void LatLonstr(int LatBase, int LonBase, std::string &lat_str, std::string &lon_str);
-
-   bool CreateCacheFile(std::string &cacheName, const osgEarth::TileKey& key, void * data, GDALDataType DType, int nband);
-
-   bool Has_Content(int cdbLod, std::string &rootDir, std::string& lod_str,
-					std::string& uref_str, std::string& rref_str, std::string &LayerName_str,
-					std::string& dataset_str, std::string &filetype_str, int LatBase, int LonBase);
-
-#ifdef _MSC_VER
-#if _MSC_VER < 1800
-   double round(double x);
-#endif
-#endif
 
 };
 

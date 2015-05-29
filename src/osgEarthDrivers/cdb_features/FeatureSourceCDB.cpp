@@ -389,6 +389,17 @@ private:
 				return false;
 			}
 
+			int fsc_index = find_dbf_int_field(dbflayer, "FSC");
+			if (fsc_index < 0)
+			{
+				OE_WARN << LC << "Unable to locate Feature subcode field in secondary dbf" << std::endl;
+				OGR_DS_Destroy(ds);
+				OGR_DS_Destroy(dbfds);
+				return false;
+			}
+
+
+
 
 			OGRFeatureH feat_handle;
 			osgDB::Archive::FileNameList archiveFileList;
@@ -418,6 +429,7 @@ private:
 
 					std::string BaseFileName;
 					std::string FACC_value;
+					std::string FSC_value;
 					std::string ModelType;
 					std::string FullModelName;
 					std::string ArchiveFileName;
@@ -428,7 +440,7 @@ private:
 					bool valid_model = true;
 
 					bool found_key = find_dbf_string_field_by_key(dbflayer, name_attr_index, BaseFileName, cnam_attr_index, NameAttrString,
-																  facc_index, FACC_value);
+																  facc_index, FACC_value, fsc_index, FSC_value);
 					if (!found_key)
 					{
 						OE_WARN << LC << "Key " << NameAttrString << " missing in secondary dbf" << std::endl;
@@ -437,7 +449,7 @@ private:
 					else
 					{
 
-						ModelKeyName = Model_KeyName(NameAttrString, BaseFileName);
+						ModelKeyName = Model_KeyName(FACC_value, FSC_value, BaseFileName);
 						f->set("osge_basename", ModelKeyName);
 
 						if (_CDB_inflated)
@@ -466,7 +478,7 @@ private:
 						{
 							//Standard CDB models. Models (.flt) are stored in a zipped archives
 							//Model textures are stored in a seperate zip archive.
-							FullModelName = Model_FileName(NameAttrString, BaseFileName);
+							FullModelName = Model_FileName(FACC_value, FSC_value, BaseFileName);
 
 							ModelZipFile = Model_ZipName();
 							if (!validate_name(ModelZipFile))
@@ -477,8 +489,8 @@ private:
 							if (!_CDB_GS_uses_GTtex)
 							{
 								TextureZipFile = Model_TextureZip();
-								if (!validate_name(TextureZipFile))
-									valid_model = false;
+								if (valid_model && (!validate_name(TextureZipFile)))
+									OE_WARN << LC << "Missing texture file for " << ModelZipFile << std::endl;
 							}
 
 							if (valid_model && !have_archive)
@@ -527,6 +539,8 @@ private:
 								if (!_CDB_geoTypical)
 									f->set("osge_modeltexture", ModelTextureDir);
 							}
+							OE_INFO << LC << "Model File " << FullModelName << " Set to Load" << std::endl;
+
 						}
 						else
 						{
@@ -560,6 +574,7 @@ private:
 									//Set the attribution for osgearth to find the referenced model
 									std::string referencedName = ci->FullReferenceName;
 									f->set("osge_modelname", referencedName);
+									OE_INFO << LC << "Model File " << FullModelName << " referenced" << std::endl;
 								}
 							}
 							else
@@ -763,8 +778,25 @@ private:
 		return -1;
 	}
 
+	int find_dbf_int_field(OGRLayer *poLayer, std::string fieldname)
+	{
+		OGRFeatureDefn	*poFDefn = poLayer->GetLayerDefn();
+		int dbfieldcnt = poFDefn->GetFieldCount();
+		for (int dbffieldIdx = 0; dbffieldIdx < dbfieldcnt; ++dbffieldIdx)
+		{
+			OGRFieldDefn *po_FieldDefn = poFDefn->GetFieldDefn(dbffieldIdx);
+			std::string thisname = po_FieldDefn->GetNameRef();
+			if (thisname.compare(fieldname) == 0)
+			{
+				if (po_FieldDefn->GetType() == OFTInteger)
+					return dbffieldIdx;
+			}
+		}
+		return -1;
+	}
+
 	bool find_dbf_string_field_by_key(OGRLayer *poLayer, int &field_index, std::string &field_value, int &key_index, std::string &Keyname,
-		int &facc_index, std::string &facc_value)
+									            int &facc_index, std::string &facc_value, int &fsc_index, std::string &fsc_value)
 	{
 		poLayer->ResetReading();
 		OGRFeature* dbf_feature;
@@ -776,7 +808,11 @@ private:
 			{
 				field_value = dbf_feature->GetFieldAsString(field_index);
 				facc_value = dbf_feature->GetFieldAsString(facc_index);
-
+				int subcode = dbf_feature->GetFieldAsInteger(fsc_index);
+				std::stringstream format_stream;
+				format_stream << std::setfill('0')
+					<< std::setw(3) << abs(subcode);
+				fsc_value = format_stream.str();
 				OGRFeature::DestroyFeature(dbf_feature);
 				return true;
 			}
@@ -977,20 +1013,20 @@ private:
 		return modbuf.str();
 	}
 
-	std::string Model_KeyName(std::string &AttrName, std::string &BaseFileName)
+	std::string Model_KeyName(std::string &FACC_value, std::string &FSC_Value, std::string &BaseFileName)
 	{
 		std::stringstream modbuf;
-		modbuf	<< AttrName.substr(0, 5) << "_" << AttrName.substr(5, 3) << "_"
+		modbuf	<< FACC_value << "_" << FSC_Value << "_"
 				<< BaseFileName << ".flt";
 		return modbuf.str();
 	}
 
-	std::string Model_FileName(std::string &AttrName, std::string &BaseFileName)
+	std::string Model_FileName(std::string &FACC_value, std::string &FSC_value, std::string &BaseFileName)
 	{
 		std::stringstream modbuf;
 		modbuf << _lat_string << _lon_string << "_D300_S001_T001_" << _lod_string
 			<< "_" << _uref_string << "_" << _rref_string << "_"
-			<< AttrName.substr(0, 5) << "_" << AttrName.substr(5, 3) << "_"
+			<<FACC_value << "_" << FSC_value << "_"
 			<< BaseFileName << ".flt";
 		return modbuf.str();
 	}

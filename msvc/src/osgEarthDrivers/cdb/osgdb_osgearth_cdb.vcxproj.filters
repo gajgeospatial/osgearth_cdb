@@ -7,6 +7,9 @@
     <ClCompile Include="..\..\..\..\src\osgEarthDrivers\cdb\CDBTileSourceDriver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\osgEarthDrivers\cdb\CDB_Tile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\src\osgEarthDrivers\cdb\CDBOptions">
@@ -16,6 +19,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="..\..\..\..\src\osgEarthDrivers\cdb\CDBTileSourceDriver">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="..\..\..\..\src\osgEarthDrivers\cdb\CDB_Tile">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
