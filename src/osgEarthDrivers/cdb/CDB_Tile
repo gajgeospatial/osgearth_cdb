@@ -28,6 +28,12 @@
 
 using namespace std;
 
+#ifdef _MSC_VER
+#if _MSC_VER < 1800
+#define round osg::round
+#endif
+#endif
+
 //This is based on the global profile in CDBTileSource
 #define MAXNLODNUM 5
 
@@ -173,7 +179,6 @@ public:
 	static double Get_Lon_Step(double Latitude);
 
 	static bool Initialize_Tile_Drivers(std::string &ErrorMsg);
-
 private:
 	std::string			m_cdbRootDir;
 	std::string			m_cdbCacheDir;
@@ -215,6 +220,7 @@ private:
 	bool Point_is_Inside_Tile(coord2d &Point, CDB_Tile_Extent &TileExtent);
 
 	void Build_From_Tiles(CDB_TilePV *Tiles, bool from_scratch = false);
+
 
 };
 

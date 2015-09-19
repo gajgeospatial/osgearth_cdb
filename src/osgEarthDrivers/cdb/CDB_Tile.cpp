@@ -32,9 +32,9 @@
 
 CDB_GDAL_Drivers Gbl_TileDrivers;
 
-const int Gbl_CDB_Tile_Sizes[11]{1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1};
+const int Gbl_CDB_Tile_Sizes[11] = {1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1};
 //Caution this only goes down to CDB Level 17
-const double Gbl_CDB_Tiles_Per_LOD[18]{1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 2048.0, 4096.0, 8192.0, 16384.0, 32768.0, 65536.0, 131072.0};
+const double Gbl_CDB_Tiles_Per_LOD[18] = {1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 2048.0, 4096.0, 8192.0, 16384.0, 32768.0, 65536.0, 131072.0};
 
 CDB_Tile::CDB_Tile(std::string cdbRootDir, std::string cdbCacheDir, CDB_Tile_Type TileType, CDB_Tile_Extent *TileExtent, int NLod) : m_cdbRootDir(cdbRootDir), m_cdbCacheDir(cdbCacheDir),
 				   m_TileExtent(*TileExtent), m_TileType(TileType), m_ImageContent_Status(NotSet), m_Tile_Status(Created), m_FileName(""), m_LayerName(""), m_FileExists(false),
@@ -313,6 +313,7 @@ int CDB_Tile::GetPathComponents(std::string& lat_str, std::string& lon_str, std:
 	}
 	return cdbLod;
 }
+
 
 void CDB_Tile::Allocate_Buffers(void)
 {

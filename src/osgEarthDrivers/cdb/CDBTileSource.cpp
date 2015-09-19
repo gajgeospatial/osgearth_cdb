@@ -113,10 +113,12 @@ osgEarth::TileSource::Status CDBTileSource::initialize(const osgDB::Options* dbO
 	   if (count == 4)
 	   {
 		   //CDB tiles always filter to geocell boundaries
+
 		   min_lon = round(min_lon);
 		   min_lat = round(min_lat);
 		   max_lat = round(max_lat);
 		   max_lon = round(max_lon);
+
 		   //Expand the limits if necessary to meet the criteria for the number of negitive lods specified
 		   int subfact = 2 << Number_of_Negitive_LODs_to_Use;  //2 starts with lod 0 this means howerver a minumum of 4 geocells will be requested even if only one
 		   if ((max_lon > min_lon) && (max_lat > min_lat))	   //is specified in the limits section of the earth file.

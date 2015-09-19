@@ -21,6 +21,7 @@
 
 #include "CDBFeatureOptions"
 
+#include <osgEarth/Version>
 #include <osgEarth/Registry>
 #include <osgEarth/XmlUtils>
 #include <osgEarth/FileUtils>
@@ -38,6 +39,12 @@
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef _MSC_VER
+#if _MSC_VER < 1800
+#define round osg::round
+#endif
+#endif
 
 #include <ogr_api.h>
 #include <ogr_core.h>
@@ -283,14 +290,6 @@ public:
 
 private:
 
-#ifdef _MSC_VER
-#if _MSC_VER < 1800
-	double round(double x)
-	{
-		return (double)((int)(x + 0.4999999999));
-	}
-#endif
-#endif
 
 	bool getFeatures(const std::string& buffer, FeatureList& features)
 	{
@@ -298,7 +297,12 @@ private:
 		OGR_SCOPED_LOCK;
 		// find the right driver for the given mime type
 		OGRSFDriverH ogrDriver = OGRGetDriverByName("ESRI Shapefile");
+
+#if GDAL_VERSION_MAJOR >= 2
+		GDALDriver *dbfDriver = GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
+#else
 		OGRSFDriver *dbfDriver = OGRSFDriverRegistrar::GetRegistrar()->GetDriverByName("ESRI Shapefile");
+#endif
 		// fail if we can't find an appropriate OGR driver:
 		if (!ogrDriver)
 		{
@@ -312,7 +316,13 @@ private:
 
 		//Open the secondary attributes file
 		std::string dbf = Secondary_Dbf_Name(".dbf");
+
+#if GDAL_VERSION_MAJOR >= 2
+		GDALOpenInfo oOpenInfo(dbf.c_str(), GA_ReadOnly);
+		GDALDataset *dbfds = dbfDriver->pfnOpen(&oOpenInfo);
+#else
 		OGRDataSource *dbfds = dbfDriver->Open(dbf.c_str(), FALSE);
+#endif
 		if (!dbfds)
 		{
 			//Check for junk files clogging up the works
@@ -334,7 +344,11 @@ private:
 					OE_INFO << LC << "Error deleteing empty shp file" << std::endl;
 				}
 			}
+#if GDAL_VERSION_MAJOR >= 2
+			dbfds = dbfDriver->pfnOpen(&oOpenInfo);
+#else
 			dbfds = dbfDriver->Open(dbf.c_str(), FALSE);
+#endif
 		}
 		if (!ds)
 		{
@@ -409,7 +423,11 @@ private:
 				std::string NameAttrString;
 				if (feat_handle)
 				{
+#if OSGEARTH_VERSION_GREATER_OR_EQUAL (2,7,0)
+					osg::ref_ptr<Feature> f = OgrUtils::createFeature(feat_handle, getFeatureProfile());
+#else
 					osg::ref_ptr<Feature> f = OgrUtils::createFeature(feat_handle, srs);
+#endif
 					if (f->hasAttr("cnam"))
 					{
 						NameAttrString = f->getString("cnam");
@@ -451,7 +469,9 @@ private:
 
 						ModelKeyName = Model_KeyName(FACC_value, FSC_value, BaseFileName);
 						f->set("osge_basename", ModelKeyName);
-
+#ifdef _DEBUG
+						f->set("name", ModelKeyName);
+#endif
 						if (_CDB_inflated)
 						{
 							//This GeoTypical or a database that is in the process of creation
