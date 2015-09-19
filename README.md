@@ -4,3 +4,4 @@ This repository contains source code for an open-source implementation of Common
 
 The tests directory contains an example earthfile that exercises the CDB drivers.
 
+Questions or comments to glen.johnson@gaj-geospatial.com
