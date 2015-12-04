@@ -495,6 +495,14 @@ protected:
         /*int16 specialEffectID2 =*/ in.readInt16();
         /*uint32 flags =*/ in.readUInt32();
         osg::Vec3d center = in.readVec3d();
+		float64 transitionRange = in.readFloat64();
+		float64 significatSize = in.readFloat64();
+
+		if (switchInDistance == 0.0 && switchOutDistance == 0.0)
+		{
+//			switchInDistance = 30000.0;
+			switchInDistance = significatSize * 1222.310099; //Assumes 30deg FOV with 1920 
+		}
 
         _lod = new osg::LOD;
         _lod->setName(id);
@@ -502,11 +510,12 @@ protected:
 
         _impChild0 = new osg::Group;
         _impChild0->setName("LOD child0");
-
+		 
+		float64 unitScale = document.unitScale();
         // Add child to lod.
         _lod->addChild(_impChild0.get(),
-             (float)switchOutDistance * document.unitScale(),
-             (float)switchInDistance * document.unitScale());
+             (float)switchOutDistance * unitScale,
+             (float)switchInDistance * unitScale);
 
         // Add this implementation to parent implementation.
         if (_parent.valid())

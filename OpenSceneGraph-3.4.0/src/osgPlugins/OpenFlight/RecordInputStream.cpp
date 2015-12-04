@@ -64,6 +64,7 @@ bool RecordInputStream::readRecordBody(opcode_type opcode, size_type size, Docum
             for (int i=0; i<document.level(); i++)
                 cout << "   ";
             cout << "opcode=" << opcode << " size=" << size;
+			std::string protoName = typeid(*prototype).name();
             if (prototype) std::cout << " " << typeid(*prototype).name();
             cout << endl;
         }
