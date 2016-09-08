@@ -8,3 +8,5 @@ Previous limitations of the terrain driver have been removed (I.E. support for a
 Update 19-September-2015
 Added updates for utilization with osgEarth 2.7 and OpenSceneGraph version 3.4.0. Updates for CMake and missing round function in Visual Studio versions prior to VS2013 were provided by Rapheal Cuisinier. Updates were added to allow for utilization of GDAL2.0 as well as maintain compatibility with previous versions of GDAL.
 
+Update 8-Aug-2016
+Add updates for osgEarth 2.7 and GDAL 2.1.1 compatibility issues.

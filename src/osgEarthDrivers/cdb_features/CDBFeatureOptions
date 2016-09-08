@@ -51,6 +51,10 @@ namespace osgEarth { namespace Drivers
 		const optional<bool>& geoTypical() const { return _geoTypical; }
 		optional<bool>& GS_uses_GTtex() { return _GS_uses_GTtex; }
 		const optional<bool>& GS_uses_GTtex() const { return _GS_uses_GTtex; }
+		optional<bool>& Edit_Support() { return _Edit_Support; }
+		const optional<bool>& Edit_Support() const { return _Edit_Support; }
+		optional<bool>& No_Second_Ref() { return _No_Second_Ref; }
+		const optional<bool>& No_Second_Ref() const { return _No_Second_Ref; }
 	public:
         CDBFeatureOptions( const ConfigOptions& opt =ConfigOptions() ) :
           FeatureSourceOptions( opt )
@@ -71,6 +75,8 @@ namespace osgEarth { namespace Drivers
 			conf.updateIfSet("inflated", _inflated);
 			conf.updateIfSet("geotypical", _geoTypical);
 			conf.updateIfSet("gs_uses_gttex", _GS_uses_GTtex);
+			conf.updateIfSet("edit_support", _Edit_Support);
+			conf.updateIfSet("no_second_ref", _No_Second_Ref);
 			return conf;
         }
 
@@ -89,6 +95,8 @@ namespace osgEarth { namespace Drivers
 			conf.getIfSet("inflated", _inflated);
 			conf.getIfSet("geotypical", _geoTypical);
 			conf.getIfSet("gs_uses_gttex", _GS_uses_GTtex);
+			conf.getIfSet("edit_support", _Edit_Support);
+			conf.getIfSet("no_second_ref", _No_Second_Ref);
 		}
 
 		optional<std::string> _rootDir;
@@ -98,6 +106,8 @@ namespace osgEarth { namespace Drivers
 		optional<bool>_inflated;
 		optional<bool>_geoTypical;
 		optional<bool>_GS_uses_GTtex;
+		optional<bool>_Edit_Support;
+		optional<bool>_No_Second_Ref;
 	};
 
 } } // namespace osgEarth::Drivers
