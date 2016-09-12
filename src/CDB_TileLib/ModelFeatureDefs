@@ -1,0 +1,377 @@
+#pragma once
+
+typedef enum 
+{
+	NewInstanace = 0,
+	RepeatInstance = 1,
+	UpLODInstance = 2,
+} modelInstanceType;
+
+struct CDB_GT_Model_Data
+{
+	double		bsr;
+	double		bbw;
+	double		bbl;
+	double		bbh;
+	double		scalex;
+	double		scaley;
+	double		scalez;
+	double		heading;
+	CDB_GT_Model_Data() : bsr(0.0), bbw(0.0), bbl(0.0), bbh(0.0), scalex(1.0), scaley(1.0), scalez(1.0), heading(0.0)
+	{
+	}
+
+	void init()
+	{
+		bsr = 0.0;
+		bbw = 0.0;
+		bbl = 0.0;
+		bbh = 0.0;
+		scalex = 1.0;
+		scaley = 1.0;
+		scalez = 1.0;
+		heading = 0.0;
+	}
+
+};
+typedef CDB_GT_Model_Data * CDB_GT_Model_DataP;
+
+struct CDB_Model_Instance
+{
+	int			rtai;
+	std::string	cnam;
+	double		ao1;
+	modelInstanceType	inst;
+	coord3d		pos;
+	CDB_Model_Instance() : rtai(90), cnam(""), ao1(0.0), inst(NewInstanace)
+	{
+	}
+
+	void set_instance(OGRFeature * f, OGRFeatureDefn * Defn)
+	{
+		rtai = f->GetFieldAsInteger("RTAI");
+		cnam = f->GetFieldAsString("CNAM");
+		ao1 = f->GetFieldAsDouble("AO1");
+		int idx = Defn->GetFieldIndex("INST");
+		if (idx >= 0)
+			inst = (modelInstanceType)f->GetFieldAsInteger("INST");
+		OGRPoint * p = (OGRPoint *)f->GetGeometryRef();
+		pos.Xpos = p->getX();
+		pos.Ypos = p->getY();
+		pos.Zpos = p->getZ();
+	}
+
+	void set_feature(OGRFeature * f, OGRFeatureDefn * Defn, GIntBig FID)
+	{
+		f->SetFID(FID);
+		f->SetStyleString(f->GetStyleString());
+		int iDstField = Defn->GetFieldIndex("RTAI");
+		if (iDstField >= 0)
+			f->SetField(iDstField, rtai);
+		iDstField = Defn->GetFieldIndex("CNAM");
+		if (iDstField >= 0)
+			f->SetField(iDstField, cnam.c_str());
+		iDstField = Defn->GetFieldIndex("AO1");
+		if (iDstField >= 0)
+			f->SetField(iDstField, ao1);
+		iDstField = Defn->GetFieldIndex("INST");
+		if (iDstField >= 0)
+			f->SetField(iDstField, inst);
+		OGRPoint poPoint;
+		poPoint.setX(pos.Xpos);
+		poPoint.setY(pos.Ypos);
+		poPoint.setZ(pos.Zpos);
+		f->SetGeometry(&poPoint);
+
+	}
+};
+typedef CDB_Model_Instance * CDB_Model_InstanceP;
+
+struct CDB_Model_Class
+{
+	int			ssr;
+	int			ssc;
+	std::string	rwid;
+	int			nvt;
+	int			ntx;
+	int			ntc;
+	int			nnl;
+	int			nix;
+	int			nis;
+	std::string	modl;
+	double		hgt;
+	int			fsc;
+	std::string	facc;
+	std::string	cnam;
+	int			cmix;
+	double		bsr;
+	double		bbw;
+	double		bbl;
+	double		bbh;
+	std::string	apid;
+	int			ahgt;
+
+	CDB_Model_Class() : ssr(0), ssc(0), rwid(""), nvt(0), ntx(0), ntc(0), nnl(0), nix(0), nis(0), modl(""), hgt(0.0), fsc(0), facc(""),
+		cnam(""), cmix(0), bsr(0.0), bbw(0.0), bbl(0.0), bbh(0.0), apid(""), ahgt(0)
+	{
+	}
+
+	void set_class(OGRFeature * f)
+	{
+		ssr = f->GetFieldAsInteger("SSR");
+		ssc = f->GetFieldAsInteger("SSC");
+		rwid = f->GetFieldAsString("RWID");
+		nvt = f->GetFieldAsInteger("NVT");
+		ntx = f->GetFieldAsInteger("NTX");
+		ntc = f->GetFieldAsInteger("NTC");
+		nnl = f->GetFieldAsInteger("NNL");
+		nix = f->GetFieldAsInteger("NIX");
+		nis = f->GetFieldAsInteger("NIS");
+		modl = f->GetFieldAsString("MODL");
+		hgt = f->GetFieldAsDouble("HGT");
+		fsc = f->GetFieldAsInteger("FSC");
+		facc = f->GetFieldAsString("FACC");
+		cnam = f->GetFieldAsString("CNAM");
+		cmix = f->GetFieldAsInteger("CMIX");
+		bsr = f->GetFieldAsDouble("BSR");
+		bbw = f->GetFieldAsDouble("BBW");
+		bbh = f->GetFieldAsDouble("BBH");
+		apid = f->GetFieldAsString("APID");
+		ahgt = f->GetFieldAsInteger("AHGT");
+	}
+
+	void set_feature(OGRFeature * f, OGRFeatureDefn * Defn, GIntBig FID)
+	{
+		f->SetFID(FID);
+		f->SetStyleString(f->GetStyleString());
+		int iDstField = Defn->GetFieldIndex("SSR");
+		if (iDstField >= 0)
+			f->SetField(iDstField, ssr);
+		iDstField = Defn->GetFieldIndex("SSC");
+		if (iDstField >= 0)
+			f->SetField(iDstField, ssc);
+		iDstField = Defn->GetFieldIndex("RWID");
+		if (iDstField >= 0)
+			f->SetField(iDstField, rwid.c_str());
+		iDstField = Defn->GetFieldIndex("NVT");
+		if (iDstField >= 0)
+			f->SetField(iDstField, nvt);
+		iDstField = Defn->GetFieldIndex("NTX");
+		if (iDstField >= 0)
+			f->SetField(iDstField, ntx);
+		iDstField = Defn->GetFieldIndex("NTC");
+		if (iDstField >= 0)
+			f->SetField(iDstField, ntc);
+		iDstField = Defn->GetFieldIndex("NNL");
+		if (iDstField >= 0)
+			f->SetField(iDstField, nnl);
+		iDstField = Defn->GetFieldIndex("NIX");
+		if (iDstField >= 0)
+			f->SetField(iDstField, nix);
+		iDstField = Defn->GetFieldIndex("NIS");
+		if (iDstField >= 0)
+			f->SetField(iDstField, nis);
+		iDstField = Defn->GetFieldIndex("MODL");
+		if (iDstField >= 0)
+			f->SetField(iDstField, modl.c_str());
+		iDstField = Defn->GetFieldIndex("HGT");
+		if (iDstField >= 0)
+			f->SetField(iDstField, hgt);
+		iDstField = Defn->GetFieldIndex("FSC");
+		if (iDstField >= 0)
+			f->SetField(iDstField, fsc);
+		iDstField = Defn->GetFieldIndex("FACC");
+		if (iDstField >= 0)
+			f->SetField(iDstField, facc.c_str());
+		iDstField = Defn->GetFieldIndex("CNAM");
+		if (iDstField >= 0)
+			f->SetField(iDstField, cnam.c_str());
+		iDstField = Defn->GetFieldIndex("CMIX");
+		if (iDstField >= 0)
+			f->SetField(iDstField, cmix);
+		iDstField = Defn->GetFieldIndex("BSR");
+		if (iDstField >= 0)
+			f->SetField(iDstField, bsr);
+		iDstField = Defn->GetFieldIndex("BBW");
+		if (iDstField >= 0)
+			f->SetField(iDstField, bbw);
+		iDstField = Defn->GetFieldIndex("BBH");
+		if (iDstField >= 0)
+			f->SetField(iDstField, bbh);
+		iDstField = Defn->GetFieldIndex("APID");
+		if (iDstField >= 0)
+			f->SetField(iDstField, apid.c_str());
+		iDstField = Defn->GetFieldIndex("AHGT");
+		if (iDstField >= 0)
+			f->SetField(iDstField, ahgt);
+	}
+
+};
+typedef CDB_Model_Class * CDB_Model_ClassP;
+
+struct CDB_GTModel_Instance
+{
+	int			rtai;
+	std::string	cnam;
+	double		ao1;
+	coord3d		pos;
+	double		scalex;
+	double		scaley;
+	double		scalez;
+	modelInstanceType inst;
+	CDB_GTModel_Instance() : rtai(90), cnam(""), ao1(0.0), scalex(1.0), scaley(1.0),scalez(1.0), inst(NewInstanace)
+	{
+	}
+
+	void set_instance(OGRFeature * f, OGRFeatureDefn * Defn)
+	{
+		rtai = f->GetFieldAsInteger("RTAI");
+		cnam = f->GetFieldAsString("CNAM");
+		ao1 = f->GetFieldAsDouble("AO1");
+		scalex = f->GetFieldAsDouble("SCALx");
+		scaley = f->GetFieldAsDouble("SCALy");
+		scalez = f->GetFieldAsDouble("SCALz");
+		int idx = Defn->GetFieldIndex("INST");
+		if (idx >= 0)
+			inst = (modelInstanceType)f->GetFieldAsInteger("INST");
+
+		OGRPoint * p = (OGRPoint *)f->GetGeometryRef();
+		pos.Xpos = p->getX();
+		pos.Ypos = p->getY();
+		pos.Zpos = p->getZ();
+	}
+
+	void set_feature(OGRFeature * f, OGRFeatureDefn * Defn, GIntBig FID)
+	{
+		f->SetFID(FID);
+		f->SetStyleString(f->GetStyleString());
+		int iDstField = Defn->GetFieldIndex("RTAI");
+		if (iDstField >= 0)
+			f->SetField(iDstField, rtai);
+		iDstField = Defn->GetFieldIndex("CNAM");
+		if (iDstField >= 0)
+			f->SetField(iDstField, cnam.c_str());
+		iDstField = Defn->GetFieldIndex("AO1");
+		if (iDstField >= 0)
+			f->SetField(iDstField, ao1);
+		iDstField = Defn->GetFieldIndex("SCALx");
+		if (iDstField >= 0)
+			f->SetField(iDstField, scalex);
+		iDstField = Defn->GetFieldIndex("SCALy");
+		if (iDstField >= 0)
+			f->SetField(iDstField, scaley);
+		iDstField = Defn->GetFieldIndex("SCALz");
+		if (iDstField >= 0)
+			f->SetField(iDstField, scalez);
+		iDstField = Defn->GetFieldIndex("INST");
+		if (iDstField >= 0)
+			f->SetField(iDstField, inst);
+		OGRPoint poPoint;
+		poPoint.setX(pos.Xpos);
+		poPoint.setY(pos.Ypos);
+		poPoint.setZ(pos.Zpos);
+		f->SetGeometry(&poPoint);
+
+	}
+};
+typedef CDB_GTModel_Instance * CDB_GTModel_InstanceP;
+
+struct CDB_GTModel_Class
+{
+	std::string	modl;
+	double		hgt;
+	int			fsc;
+	std::string	facc;
+	std::string	cnam;
+	int			cmix;
+	double		bsr;
+	double		bbw;
+	double		bbl;
+	double		bbh;
+	int			ahgt;
+
+	CDB_GTModel_Class() : modl(""), hgt(0.0), fsc(0), facc(""),
+						  cnam(""), cmix(0), bsr(0.0), bbw(0.0), bbl(0.0), bbh(0.0), ahgt(0)
+	{
+	}
+
+	void set_class(OGRFeature * f)
+	{
+		modl = f->GetFieldAsString("MODL");
+		hgt = f->GetFieldAsDouble("HGT");
+		fsc = f->GetFieldAsInteger("FSC");
+		facc = f->GetFieldAsString("FACC");
+		cnam = f->GetFieldAsString("CNAM");
+		cmix = f->GetFieldAsInteger("CMIX");
+		bsr = f->GetFieldAsDouble("BSR");
+		bbw = f->GetFieldAsDouble("BBW");
+		bbh = f->GetFieldAsDouble("BBH");
+		ahgt = f->GetFieldAsInteger("AHGT");
+	}
+
+	void set_feature(OGRFeature * f, OGRFeatureDefn * Defn, GIntBig FID)
+	{
+		f->SetFID(FID);
+		f->SetStyleString(f->GetStyleString());
+		int iDstField = Defn->GetFieldIndex("MODL");
+		if (iDstField >= 0)
+			f->SetField(iDstField, modl.c_str());
+		iDstField = Defn->GetFieldIndex("HGT");
+		if (iDstField >= 0)
+			f->SetField(iDstField, hgt);
+		iDstField = Defn->GetFieldIndex("FSC");
+		if (iDstField >= 0)
+			f->SetField(iDstField, fsc);
+		iDstField = Defn->GetFieldIndex("FACC");
+		if (iDstField >= 0)
+			f->SetField(iDstField, facc.c_str());
+		iDstField = Defn->GetFieldIndex("CNAM");
+		if (iDstField >= 0)
+			f->SetField(iDstField, cnam.c_str());
+		iDstField = Defn->GetFieldIndex("CMIX");
+		if (iDstField >= 0)
+			f->SetField(iDstField, cmix);
+		iDstField = Defn->GetFieldIndex("BSR");
+		if (iDstField >= 0)
+			f->SetField(iDstField, bsr);
+		iDstField = Defn->GetFieldIndex("BBW");
+		if (iDstField >= 0)
+			f->SetField(iDstField, bbw);
+		iDstField = Defn->GetFieldIndex("BBH");
+		if (iDstField >= 0)
+			f->SetField(iDstField, bbh);
+		iDstField = Defn->GetFieldIndex("AHGT");
+		if (iDstField >= 0)
+			f->SetField(iDstField, ahgt);
+	}
+
+};
+typedef CDB_GTModel_Class * CDB_GTModel_ClassP;
+
+struct CDB_Model_Runtime_Class
+{
+	std::string		Model_Base_Name;
+	std::string		FACC_value;
+	std::string		FSC_value;
+
+	CDB_Model_Runtime_Class() : Model_Base_Name(""), FACC_value(""), FSC_value("")
+	{
+	}
+
+	std::string set_class(OGRFeature * f, int key_index, int Model_Base_Index, int FACC_Index, int FSC_Index)
+	{
+		std::string cnam = f->GetFieldAsString(key_index);
+		Model_Base_Name = f->GetFieldAsString(Model_Base_Index);
+		FACC_value = f->GetFieldAsString(FACC_Index);
+		int subcode = f->GetFieldAsInteger(FSC_Index);
+		std::stringstream format_stream;
+		format_stream << std::setfill('0')
+			<< std::setw(3) << abs(subcode);
+		FSC_value = format_stream.str();
+		return cnam;
+	}
+
+};
+typedef CDB_Model_Runtime_Class * CDB_Model_Runtime_ClassP;
+typedef std::vector<CDB_Model_Runtime_Class> CDB_Model_RuntimeVec;
+typedef std::map<std::string, CDB_Model_Runtime_Class> CDB_Model_RuntimeMap;

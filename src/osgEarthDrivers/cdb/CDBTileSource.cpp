@@ -25,18 +25,21 @@
 #include <osgEarth/URI>
 #include <osgEarth/TileSource>
 #include <osgEarth/ImageToHeightFieldConverter>
+
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 #include "CDBTileSource"
 #include "CDBOptions"
-#include "CDB_Tile"
+#include <CDB_TileLib/CDB_Tile>
 
 
 using namespace osgEarth;
 
 
 CDBTileSource::CDBTileSource( const osgEarth::TileSourceOptions& options ) : TileSource(options), _options(options), _UseCache(false), _rootDir(""), _cacheDir(""), 
-																			_tileSize(1024)
+																			_tileSize(1024), _dataSet("_S001_T001_")
 {
 
 }   
@@ -175,21 +178,30 @@ osgEarth::TileSource::Status CDBTileSource::initialize(const osgDB::Options* dbO
 			   //Look for the Default Cache Dir
 			   std::stringstream buf;
 			   buf << _rootDir
-				   << "\\osgEarth"
-				   << "\\CDB_Cache";
+				   << "/osgEarth"
+				   << "/CDB_Cache";
 			   _cacheDir = buf.str();
+#ifdef _WIN32
 			   DWORD ftyp = ::GetFileAttributes(_cacheDir.c_str());
 			   if (ftyp != INVALID_FILE_ATTRIBUTES)
 			   {
 				   _UseCache = true;
 			   }
+#else
+			   int ftyp = ::access(_cacheDir.c_str(), F_OK);
+			   if (ftyp == 0)
+			   {
+				   _UseCache = true;
+			   }
+
+#endif
 		   }
 	   }
    }
 
    if (errorset)
    {
-	   TileSource::Status Rstatus(Errormsg);
+	   osgEarth::TileSource::Status Rstatus(Errormsg);
 	   return Rstatus;
    }
    else
@@ -206,8 +218,7 @@ osg::Image* CDBTileSource::createImage(const osgEarth::TileKey& key,
 	const GeoExtent key_extent = key.getExtent();
 	CDB_Tile_Type tiletype = Imagery;
 	CDB_Tile_Extent tileExtent(key_extent.north(), key_extent.south(), key_extent.east(), key_extent.west());
-
-	CDB_Tile *mainTile = new CDB_Tile(_rootDir, _cacheDir, tiletype, &tileExtent);
+	CDB_Tile *mainTile = new CDB_Tile(_rootDir, _cacheDir, tiletype, _dataSet, &tileExtent);
 	std::string base = mainTile->FileName();
 	int cdbLod = mainTile->CDB_LOD_Num();
 	if (cdbLod >= 0)
@@ -267,8 +278,7 @@ osg::HeightField* CDBTileSource::createHeightField(const osgEarth::TileKey& key,
 	const GeoExtent key_extent = key.getExtent();
 	CDB_Tile_Type tiletype = Elevation;
 	CDB_Tile_Extent tileExtent(key_extent.north(), key_extent.south(), key_extent.east(), key_extent.west());
-
-	CDB_Tile *mainTile = new CDB_Tile(_rootDir, _cacheDir, tiletype, &tileExtent);
+	CDB_Tile *mainTile = new CDB_Tile(_rootDir, _cacheDir, tiletype, _dataSet, &tileExtent);
 	std::string base = mainTile->FileName();
 	int cdbLod = mainTile->CDB_LOD_Num();
 

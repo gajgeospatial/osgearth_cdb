@@ -1,0 +1,406 @@
+#pragma once
+// Copyright (c) 2014-2015 GAJ Geospatial Enterprises, Orlando FL
+// This file is based on the Common Database (CDB) Specification for USSOCOM
+// Version 3.0 – October 2008
+
+// CDB_Tile is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// CDB_Tile is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public License
+// along with CDB_Tile.  If not, see <http://www.gnu.org/licenses/>.
+
+// 2015 GAJ Geospatial Enterprises, Orlando FL
+// Modified for General Incorporation of Common Database (CDB) support within osgEarth
+//
+#include "CDB_Tile_Library.h"
+#include <sstream>
+#include <iomanip>
+#include <vector>
+#include <osgEarth/TileSource>
+#include <gdal_priv.h>
+#include <ogr_core.h>
+#include <ogrsf_frmts.h>
+#include <ogr_attrind.h>
+#include <ogr_spatialref.h>
+#include <osgDB/Archive>
+using namespace std;
+
+#ifdef _MSC_VER
+#if _MSC_VER < 1800
+#define round osg::round
+#endif
+#endif
+
+//This is based on the global profile in CDBTileSource
+#define MAXNLODNUM 5
+
+struct coord2d
+{
+	double	Xpos;
+	double	Ypos;
+	coord2d() : Xpos(0.0), Ypos(0.0)
+	{
+	}
+	coord2d(double x, double y) : Xpos(x), Ypos(y)
+	{
+	}
+	bool operator==(coord2d &coord)
+	{
+		if ((abs(Xpos - coord.Xpos) < DBL_EPSILON) &&
+			(abs(Ypos - coord.Ypos) < DBL_EPSILON))
+			return true;
+		else
+			return false;
+	}
+};
+
+typedef vector<coord2d> coord2dV;
+struct coord3d
+{
+	double	Xpos;
+	double	Ypos;
+	double  Zpos;
+	coord3d() : Xpos(0.0), Ypos(0.0), Zpos(0.0)
+	{
+	}
+	coord3d(double x, double y, double z) : Xpos(x), Ypos(y), Zpos(z)
+	{
+	}
+	bool operator==(coord3d &coord)
+	{
+		if ((abs(Xpos - coord.Xpos) < DBL_EPSILON) &&
+			(abs(Ypos - coord.Ypos) < DBL_EPSILON) &&
+			(abs(Zpos - coord.Zpos) < DBL_EPSILON))
+			return true;
+		else
+			return false;
+	}
+};
+typedef std::vector<coord3d> coord3dV;
+
+typedef enum
+{
+	None = 0,
+	Partial = 1,
+	Full = 2,
+	NotSet = 3,
+}Image_Contrib;
+
+typedef enum
+{
+	Imagery = 0,
+	Elevation = 1,
+	ImageryCache = 2,
+	ElevationCache = 3,
+	GeoPackageMap = 4,
+	GeoPackageFootPrint = 5,
+	GeoSpecificModel = 6,
+	GeoTypicalModel = 7,
+	CDB_Unknown = 11
+}CDB_Tile_Type;
+
+typedef enum
+{
+	Created = 0,
+	Opened = 1,
+	Loaded = 2
+}CDB_Tile_Status;
+
+struct CDB_Tile_Pixels
+{
+	int		pixX;
+	int		pixY;
+	int		bands;
+	GDALDataType pixType;
+	coord2d degPerPix;
+	CDB_Tile_Pixels() : pixX(1024), pixY(1024), bands(3), pixType(GDT_Byte)
+	{
+	}
+};
+
+struct CDB_GDAL_Access
+{
+	GDALDataset *		poDataset;
+	GDALRasterBand *	RedBand;
+	GDALRasterBand *	GreenBand;
+	GDALRasterBand *	BlueBand;
+	GDALDriver *		poDriver;
+	double				adfGeoTransform[6];
+	unsigned char *		reddata;
+	unsigned char *		greendata;
+	unsigned char *		bluedata;
+	float *				elevationdata;
+	CDB_GDAL_Access() : poDataset(NULL), RedBand(NULL), GreenBand(NULL), BlueBand(NULL), reddata(NULL),
+		greendata(NULL), bluedata(NULL), elevationdata(NULL), poDriver(NULL)
+	{
+	}
+};
+
+struct CDB_GDAL_Drivers
+{
+	bool			cdb_drivers_initialized;
+	GDALDriver *	cdb_JP2Driver;
+	GDALDriver *	cdb_GTIFFDriver;
+	GDALDriver *	cdb_HFADriver;
+	GDALDriver *	cdb_ShapefileDriver;
+	GDALDriver *	cdb_GeoPackageDriver;
+	CDB_GDAL_Drivers() : cdb_drivers_initialized(false), cdb_JP2Driver(NULL), cdb_GTIFFDriver(NULL), cdb_HFADriver(NULL), cdb_ShapefileDriver(NULL),
+						 cdb_GeoPackageDriver(NULL)
+	{
+	}
+};
+
+struct CDB_Tile_Extent
+{
+	double	North;
+	double	South;
+	double	East;
+	double	West;
+	CDB_Tile_Extent() : North(0.0), South(0.0), East(0.0), West(0.0)
+	{
+	}
+	CDB_Tile_Extent(double n, double s, double e, double w) : North(n), South(s), East(e), West(w)
+	{
+	}
+
+};
+
+typedef CDB_Tile_Extent * CDB_Tile_ExtentP;
+typedef vector<CDB_Tile_ExtentP> CDB_Tile_ExtentPV;
+
+#include "ModelFeatureDefs"
+
+struct CDB_Model_Tile_Set
+{
+	std::string			ModelWorkingName;
+	std::string			ModelGeometryName;
+	std::string			ModelTextureName;
+	std::string			ModelDbfName;
+	std::string			PrimaryLayerName;
+	std::string			ClassLayerName;
+	GDALDataset *		PrimaryTileOgr;
+	GDALDataset *		ClassTileOgr;
+	OGRLayer *			PrimaryLayer;
+	bool				ModelWorkingNameExists;
+	bool				ModelGeometryNameExists;
+	bool				ModelTextureNameExists;
+	bool				ModelDbfNameExists;
+	CDB_Model_RuntimeMap clsMap;
+	osgDB::Archive::FileNameList archiveFileList;
+
+	CDB_Model_Tile_Set() : ModelWorkingName(""), ModelGeometryName(""), ModelTextureName(""), ModelDbfName(""), ModelWorkingNameExists(false),
+		ModelGeometryNameExists(false), ModelTextureNameExists(false), ModelDbfNameExists(false), PrimaryTileOgr(NULL), ClassTileOgr(NULL), PrimaryLayer(NULL)
+	{
+		clsMap.clear();
+	}
+
+	void Clear_Class_Map()
+	{
+		clsMap.clear();
+	}
+};
+
+struct CDB_GT_Model_Tile_Selector
+{
+	std::string		TilePrimaryShapeName;
+	std::string		PrimaryLayerName;
+	std::string		TileSecondaryShapeName;
+	std::string		ClassLayerName;
+	GDALDataset *	PrimaryTileOgr;
+	GDALDataset *	ClassTileOgr;
+	OGRLayer *		PrimaryLayer;
+	bool			PrimaryExists;
+	bool			ClassExists;
+	CDB_Model_RuntimeMap clsMap;
+	CDB_GT_Model_Tile_Selector() : TilePrimaryShapeName(""), TileSecondaryShapeName(""), PrimaryExists(false),
+		ClassExists(false), PrimaryLayerName(""), PrimaryTileOgr(NULL), ClassTileOgr(NULL),PrimaryLayer(NULL)
+	{
+		clsMap.clear();
+	}
+
+	void Clear_Clas_Map()
+	{
+		clsMap.clear();
+	}
+};
+typedef CDB_GT_Model_Tile_Selector * CDB_GT_Model_Tile_SelectorP;
+typedef std::vector<CDB_GT_Model_Tile_Selector> CDB_GT_Tile_SelectorV;
+typedef std::vector<CDB_GT_Model_Tile_SelectorP> CDB_GT_Tile_SelectorPV;
+
+class CDB_Tile;
+typedef CDB_Tile * CDB_TileP;
+typedef vector<CDB_TileP> CDB_TilePV;
+
+class CDBTILELIBRARYAPI CDB_Tile
+{
+public:
+	CDB_Tile(std::string cdbRootDir, std::string cdbCacheDir, CDB_Tile_Type TileType, std::string dataset, CDB_Tile_Extent *TileExtent, int NLod=0);
+
+	virtual ~CDB_Tile();
+
+	std::string FileName(int sel = -1);
+
+	int CDB_LOD_Num(void);
+
+	bool Build_Cache_Tile(bool save_cache);
+
+	bool Build_Earth_Tile(void);
+
+	bool Tile_Exists(int sel = -1);
+
+	double West(void);
+
+	double East(void);
+
+	double North(void);
+
+	double South(void);
+
+	bool Load_Tile(void);
+
+	coord2d LL2Pix(coord2d LLPoint);
+
+	bool Get_Image_Pixel(coord2d ImPix, unsigned char &RedPix, unsigned char &GreenPix, unsigned char &BluePix);
+
+	bool Get_Elevation_Pixel(coord2d ImPix, float &ElevationPix);
+
+	void Free_Resources(void);
+
+	osg::Image* Image_From_Tile(void);
+
+	osg::HeightField* HeightField_From_Tile(void);
+
+	bool Init_Model_Tile(int sel);
+
+	bool Init_Map_Tile(void);
+
+	OGRFeature * Next_Valid_Feature(int sel, bool inflated, std::string &ModelKeyName, std::string &FullModelName, 
+									std::string &ArchiveFileName, bool &Model_in_Archive);
+
+	bool Model_Geometry_Name(std::string &GeometryName);
+
+	bool Model_Texture_Directory(std::string &TextureDir);
+
+	bool Model_Texture_Archive(std::string &TextureArchive);
+
+	std::string Model_HeaderName(void);
+
+	std::string Model_ZipDir(void);
+
+	std::string Model_KeyNameFromArchiveName(const std::string &ArchiveFileName, std::string &Header);
+
+	int Model_Sel_Count(void);
+
+	osgDB::Archive::FileNameList * Model_Archive_List(void);
+
+	OGRLayer * Map_Tile_Layer(std::string LayerName);
+
+	GDALDataset * Map_Tile_Dataset(void);
+
+	static double Get_Lon_Step(double Latitude);
+
+	static bool Initialize_Tile_Drivers(std::string &ErrorMsg);
+private:
+	std::string				m_cdbRootDir;
+	std::string				m_cdbCacheDir;
+	CDB_Tile_Extent			m_TileExtent;
+	Image_Contrib			m_ImageContent_Status;
+	CDB_Tile_Status			m_Tile_Status;
+	std::string				m_FileName;
+	std::string				m_LayerName;
+	std::string				m_DataSet;
+	std::string				m_PrimaryName;
+	std::string				m_lat_str;
+	std::string				m_lon_str;
+	std::string				m_lod_str;
+	std::string				m_uref_str;
+	std::string				m_rref_str;
+
+	CDB_Tile_Type			m_TileType;
+	bool					m_FileExists;
+	CDB_Tile_Pixels			m_Pixels;
+	int						m_CDB_LOD_Num;
+	CDB_GDAL_Access			m_GDAL;
+	bool					m_Subordinate_Component;
+	CDB_Model_Tile_Set		m_ModelSet;
+	CDB_GT_Tile_SelectorV	m_GTModelSet;
+
+	int GetPathComponents(std::string& lat_str, std::string& lon_str, std::string& lod_str,
+						  std::string& uref_str, std::string& rref_str);
+
+	void Allocate_Buffers(void);
+
+	void Free_Buffers(void);
+
+	void Close_Dataset(void);
+
+	bool Open_Tile(void);
+
+	bool Open_GS_Model_Tile(void);
+
+	bool Open_GT_Model_Tile(void);
+
+	void Close_GT_Model_Tile(void);
+
+	void Close_GS_Model_Tile(void);
+
+	bool Read(void);
+
+	bool Save(void);
+
+	bool Write(void);
+
+	void Fill_Tile(void);
+
+	Image_Contrib Get_Contribution(CDB_Tile_Extent &TileExtent);
+
+	Image_Contrib Image_Is_Inside_Tile(CDB_Tile_Extent &TileExtent);
+
+	bool Point_is_Inside_Tile(coord2d &Point, CDB_Tile_Extent &TileExtent);
+
+	void Build_From_Tiles(CDB_TilePV *Tiles, bool from_scratch = false);
+
+	std::string Xml_Name(std::string Name);
+
+	std::string Set_FileType(std::string Name, std::string type);
+
+	bool Init_GS_Model_Tile(void);
+
+	bool Init_GT_Model_Tile(int sel);
+
+	bool Load_Class_Map(OGRLayer * poLayer, CDB_Model_RuntimeMap &clsMap);
+
+	int Find_Field_Index(OGRFeatureDefn *poFDefn, std::string fieldname, OGRFieldType Type);
+
+	bool Load_Archive(std::string ArchiveName, osgDB::Archive::FileNameList &archiveFileList);
+
+	std::string archive_validate_modelname(osgDB::Archive::FileNameList &archiveFileList, std::string &filename);
+
+	std::string Model_KeyName(std::string &FACC_value, std::string &FSC_Value, std::string &BaseFileName);
+
+	std::string GeoTypical_FullFileName(std::string &BaseFileName);
+
+	std::string Model_FullFileName(std::string &AttrName, std::string &BaseFileName);
+
+	std::string Model_FileName(std::string &FACC_value, std::string &FSC_value, std::string &BaseFileName);
+
+	OGRFeature * Next_Valid_Geospecific_Feature(bool inflated, std::string &ModelKeyName, std::string &FullModelName, std::string &ArchiveFileName,
+												bool &Model_in_Archive);
+
+	OGRFeature * Next_Valid_GeoTypical_Feature(int sel, std::string &ModelKeyName, std::string &ModelFullName, bool &Model_in_Archive);
+
+	std::string Model_TextureDir(void);
+
+	bool validate_tile_name(std::string &filename);
+
+	bool Open_GP_Map_Tile(void);
+
+};
+

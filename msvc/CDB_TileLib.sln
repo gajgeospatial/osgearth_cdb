@@ -1,0 +1,63 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CDB_TileLib", "src\CDB_TileLib\CDB_TileLib.vcxproj", "{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+		vs2010_Debug|Win32 = vs2010_Debug|Win32
+		vs2010_Debug|x64 = vs2010_Debug|x64
+		vs2010_Release|Win32 = vs2010_Release|Win32
+		vs2010_Release|x64 = vs2010_Release|x64
+		vs2012_Debug|Win32 = vs2012_Debug|Win32
+		vs2012_Debug|x64 = vs2012_Debug|x64
+		vs2012_Release|Win32 = vs2012_Release|Win32
+		vs2012_Release|x64 = vs2012_Release|x64
+		vs2015_Debug|Win32 = vs2015_Debug|Win32
+		vs2015_Debug|x64 = vs2015_Debug|x64
+		vs2015_Release|Win32 = vs2015_Release|Win32
+		vs2015_Release|x64 = vs2015_Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.Debug|Win32.Build.0 = Debug|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.Debug|x64.ActiveCfg = Debug|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.Debug|x64.Build.0 = Debug|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.Release|Win32.ActiveCfg = Release|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.Release|Win32.Build.0 = Release|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.Release|x64.ActiveCfg = Release|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.Release|x64.Build.0 = Release|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2010_Debug|Win32.ActiveCfg = vs2010_Debug|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2010_Debug|Win32.Build.0 = vs2010_Debug|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2010_Debug|x64.ActiveCfg = vs2010_Debug|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2010_Debug|x64.Build.0 = vs2010_Debug|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2010_Release|Win32.ActiveCfg = vs2010_Release|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2010_Release|Win32.Build.0 = vs2010_Release|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2010_Release|x64.ActiveCfg = vs2010_Release|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2010_Release|x64.Build.0 = vs2010_Release|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2012_Debug|Win32.ActiveCfg = vs2012_Debug|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2012_Debug|Win32.Build.0 = vs2012_Debug|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2012_Debug|x64.ActiveCfg = vs2012_Debug|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2012_Debug|x64.Build.0 = vs2012_Debug|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2012_Release|Win32.ActiveCfg = vs2012_Release|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2012_Release|Win32.Build.0 = vs2012_Release|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2012_Release|x64.ActiveCfg = vs2012_Release|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2012_Release|x64.Build.0 = vs2012_Release|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2015_Debug|Win32.ActiveCfg = vs2015_Debug|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2015_Debug|Win32.Build.0 = vs2015_Debug|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2015_Debug|x64.ActiveCfg = vs2015_Debug|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2015_Debug|x64.Build.0 = vs2015_Debug|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2015_Release|Win32.ActiveCfg = vs2015_Release|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2015_Release|Win32.Build.0 = vs2015_Release|Win32
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2015_Release|x64.ActiveCfg = vs2015_Release|x64
+		{FCB18B94-BDFE-45B5-882B-52E5CF3C839A}.vs2015_Release|x64.Build.0 = vs2015_Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

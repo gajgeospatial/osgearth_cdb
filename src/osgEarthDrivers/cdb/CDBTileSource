@@ -57,6 +57,7 @@ private:
    bool			_UseCache;
    std::string	_rootDir;
    std::string	_cacheDir;
+   std::string	_dataSet;
    int			_tileSize;
 
 };

@@ -10,3 +10,6 @@ Added updates for utilization with osgEarth 2.7 and OpenSceneGraph version 3.4.0
 
 Update 8-Aug-2016
 Add updates for osgEarth 2.7 and GDAL 2.1.1 compatibility issues.
+
+Update 12-Sept-2016
+Moved primary CDB functionality to CDB_TileLib with modifications to osgEarthDrivers\cdb and osgEarthDrivers\cdb_features to access cdb through this new library. This removes essentially duplicated code within the two drivers.
